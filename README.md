@@ -160,10 +160,8 @@ CSV는 모두 `encoding="utf-8-sig"`로 읽습니다(BOM 있음).
 │  ├─ load.py                  # CSV 로드 + @st.cache_data
 │  ├─ metrics.py               # 평단가·변동률·권역 집계
 │  └─ theme.py                 # 위 디자인 토큰
-├─ data/                       # apt_master.csv 등 4개
-├─ mockup/
-│  ├─ index.html
-│  └─ 맛동산_웹앱시안_v2_4화면.pdf
+├─ data/
+│  └─ apt_master.csv 등
 ├─ requirements.txt
 └─ README.md
 ```
