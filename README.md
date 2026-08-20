@@ -1,4 +1,4 @@
-# `streamlit` 브랜치 — 맛동산 웹앱
+# `streamlit` 브랜치 — 맛동산
 
 서울 아파트 정책 전후 분석 결과를 Streamlit 웹앱으로 만드는 브랜치입니다.
 데이터 수집·전처리는 `main` 브랜치, `dataanalysis` 브랜치, `webscraping` 브랜치, **이 브랜치는 화면 구현만** 담당합니다.
@@ -58,12 +58,37 @@ st.dataframe(
 
 앱이 읽는 파일과 필요한 컬럼입니다. 스키마가 바뀌면 이 표를 먼저 고칩니다.
 
+### 부동산 (`main` 브랜치 · `pipeline.py` 산출)
+
 | 파일 | 행 수 | 사용 컬럼 |
 |---|---|---|
 | `apt_master.csv` | 161,512 | `구` `법정동` `계약일자` `전용면적` `평형` `거래금액` `평단가` `거래유형` `정책여부` `이상치여부` |
 | `gu_dong_month_avg_price.csv` | 7,169 | `구` `법정동` `계약년월` `평균평단가` `중위평단가` `거래건수` |
-| `real_estate_news_inauguration.csv` | 1,040 | `정책 카테고리` `정책 시점` `기사 작성일자` `제목` `네이버 뉴스 링크` |
-| `News_Scraping.csv` | 640 | `대통령` `정책` `시기` `날짜` `기사제목` `url` `감정` `수치` |
+
+### 뉴스 (`webscraping` 브랜치 산출)
+
+| 파일 | 수집 방식 | 표본 | 사용 컬럼 |
+|---|---|---|---|
+| `news_titles.csv` | keyword — "부동산 대출 규제" 검색 | 정책 전/후 각 200, 총 400 | 확인 필요 |
+| `news_titles_category.csv` | category — 네이버 '경제 > 부동산' 날짜별 | 정책 전/후 각 8일치 | 확인 필요 |
+| `sentiment_summary.csv` | 위 두 파일의 감성 집계표 | — | 확인 필요 |
+
+> **뉴스 소스는 아직 미정입니다.** 시각화가 끝나기 전이라 `keyword` / `category` / 둘 다 중 무엇을 쓸지 정하지 않았습니다.
+> 화면 구성 표의 데이터 열에 적힌 `News_Scraping.csv` · `real_estate_news_inauguration.csv`는 **구버전 파일명**이며,
+> 소스를 확정할 때 이 표와 화면 구성 표를 함께 고칩니다. 표본이 640 → 400건대로 줄어 화면의 건수·비율도 다시 계산해야 합니다.
+
+**감정 3그룹 매핑 (확정)**
+
+```
+모델: dlckdfuf141/korean-emotion-kluebert-v2  (7종 감정)
+
+긍정 = 행복
+중립 = 중립 · 놀람          ← 놀람은 중립으로 묶습니다
+부정 = 혐오 · 분노 · 슬픔 · 공포
+```
+
+놀람은 21건(현 정부 160건 중 13.1%)으로 두 번째로 많아, 부정으로 넘기면 부정 비중이 27.5% → 40.6%로 뜁니다.
+**중립 고정**이므로 화면의 27.5%는 그대로 유지됩니다.
 
 CSV는 모두 `encoding="utf-8-sig"`로 읽습니다(BOM 있음).
 
@@ -159,12 +184,23 @@ CSV는 모두 `encoding="utf-8-sig"`로 읽습니다(BOM 있음).
 ├─ lib/
 │  ├─ load.py                  # CSV 로드 + @st.cache_data
 │  ├─ metrics.py               # 평단가·변동률·권역 집계
+│  ├─ sentiment.py             # 7종 → 긍정/중립/부정 3그룹 매핑
 │  └─ theme.py                 # 위 디자인 토큰
 ├─ data/
-│  └─ apt_master.csv 등
+│  ├─ apt_master.csv                 # main · pipeline.py
+│  ├─ gu_dong_month_avg_price.csv    # main · pipeline.py
+│  ├─ news_titles.csv                # webscraping · keyword
+│  ├─ news_titles_category.csv       # webscraping · category
+│  └─ sentiment_summary.csv          # webscraping · 감성 집계
+├─ mockup/
+│  ├─ index.html
+│  └─ 맛동산_웹앱시안_v2_4화면.pdf
 ├─ requirements.txt
 └─ README.md
 ```
+
+다른 브랜치 산출물은 **`data/`에 복사해 두고 앱은 그 폴더만 읽습니다.** 브랜치를 넘나들며 상대 경로로
+접근하면 클론 위치에 따라 깨지므로, 갱신할 때 파일을 덮어쓰는 방식으로 씁니다.
 
 ## 실행
 
@@ -186,8 +222,11 @@ plotly>=5.22
 
 ## 구현 체크리스트
 
-- [ ] `lib/load.py` — 4개 CSV 로드, `@st.cache_data`, 이상치 필터 기본 적용
+- [ ] `data/` 폴더 구성 — 다른 브랜치 산출물 복사
+- [ ] 뉴스 소스 확정 (keyword / category / 둘 다) → 데이터 계약 표와 화면 구성 표 갱신
+- [ ] `lib/load.py` — `data/` CSV 로드, `@st.cache_data`, 이상치 필터 기본 적용
 - [ ] `lib/metrics.py` — 구별/권역별/동별 변동률, 월별 집계 (산술평균 기본, 가중평균은 검증용 옵션)
+- [ ] `lib/sentiment.py` — 7종 → 3그룹 매핑 (놀람 = 중립)
 - [ ] `lib/theme.py` — 색 토큰, Plotly 공통 레이아웃(그리드 흐리게, 범례 상단)
 - [ ] 메인 — 평단가·거래량 2단 패널 + 정책 마커 4개
 - [ ] 메인 — 4분면 산점도 (좌상단 음영, 권역 색)
