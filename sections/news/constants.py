@@ -6,4 +6,4 @@
 
 POLICY_OPTIONS = ["6·27", "9·7", "10·15", "평시"]
 PHASE_OPTIONS = ["평시", "시행전", "시행일", "초기반응"]
-PERSPECTIVE_OPTIONS = ["기업", "소비자", "시장"]
+PERSPECTIVE_OPTIONS = ["기업", "시장"]
