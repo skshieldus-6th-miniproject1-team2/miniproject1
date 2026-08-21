@@ -40,10 +40,11 @@ st.divider()
 monthly_chart.render(base_gu, target, apt, before, after)
 st.divider()
 
-summary_table.render(before, after, summary, area_before, area_after)
-st.divider()
-
-area_compare.render(target, before, after, compare_metric)
+col_e, col_f = st.columns([2, 3])
+with col_e:
+    summary_table.render(before, after, summary, area_before, area_after)
+with col_f:
+    area_compare.render(target, before, after, compare_metric)
 st.divider()
 
 dong_compare.render(apt, base_gu)

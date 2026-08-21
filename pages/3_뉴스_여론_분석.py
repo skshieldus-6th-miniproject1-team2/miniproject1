@@ -22,13 +22,22 @@ news = sidebar.render_sidebar(news_all)
 kpi.render(total_collected, news_all)
 st.divider()
 
+<<<<<<< Updated upstream
 collection.render(news_all)
 st.divider()
 
 col_left, col_right = st.columns([3, 2])
 with col_left:
+=======
+# [수정 2] 기사 수집 구성(파이차트) · 단계별 감정 분포(표) · 세부 감정 분포(막대)를
+# 1:1:1 비율의 한 줄에 나란히 배치. 세 컴포넌트 모두 컬럼 폭을 그대로 채워서 렌더링한다.
+col_pie, col_table, col_bar = st.columns([1, 1, 1])
+with col_pie:
+    collection.render(news_full)
+with col_table:
+>>>>>>> Stashed changes
     phase_table.render(news)
-with col_right:
+with col_bar:
     emotion_bar.render(news)
 st.divider()
 

@@ -38,7 +38,9 @@ def render(apt, gu_table, valid, unit, sort_key, min_sample):
         textposition="outside",
         cliponaxis=False,  # 짧은 막대의 바깥 라벨이 플롯 경계에서 잘리지 않도록
     ))
-    fig.update_layout(**theme.plotly_layout(height=max(420, 22 * len(plot_df)), showlegend=False, xaxis_title="평단가 변동률"))
+    # [수정 1] 25개 자치구 막대가 세로로 빽빽했던 문제: 막대당 높이를 22px→34px로 늘려
+    # 전체 차트 높이를 키움 (bargap은 기본값 유지). 정렬 순서·라벨 텍스트·데이터는 변경 없음.
+    fig.update_layout(**theme.plotly_layout(height=max(420, 34 * len(plot_df)), showlegend=False, xaxis_title="평단가 변동률"))
     axis_lo = min(0, plot_df[rate_col].min())
     axis_hi = max(0, plot_df[rate_col].max())
     fig.update_xaxes(tickformat=".0%", range=[axis_lo * 1.6 if axis_lo < 0 else -0.01, axis_hi * 1.6 if axis_hi > 0 else 0.01])

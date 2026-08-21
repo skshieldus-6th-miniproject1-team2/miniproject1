@@ -40,7 +40,12 @@ def render(target, before, after, compare_metric):
         fig_area = go.Figure()
         fig_area.add_trace(go.Bar(x=area_price.index, y=area_price.get("정책전"), name="정책 전", marker_color=theme.COLOR["policy_before"]))
         fig_area.add_trace(go.Bar(x=area_price.index, y=area_price.get("정책후"), name="정책 후", marker_color=theme.COLOR["policy_after"]))
-        fig_area.update_layout(**theme.plotly_layout(height=360, barmode="group", yaxis_title="만원/평"))
+        # [수정 3] 막대가 너무 두꺼워 보이던 문제: bargap을 늘려 막대 폭을 줄이고,
+        # bargroupgap으로 "정책 전/정책 후" 그룹 내 막대 간격도 함께 다듬음.
+        # 축 범위·데이터 값은 그대로 유지.
+        fig_area.update_layout(**theme.plotly_layout(
+            height=360, barmode="group", yaxis_title="만원/평", bargap=0.45, bargroupgap=0.15,
+        ))
     else:
         st.subheader("전용면적별 거래량 변화")
         area_counts = tmp.groupby(["면적구분", "정책여부"]).size().unstack(fill_value=0).reindex(AREA_ORDER)

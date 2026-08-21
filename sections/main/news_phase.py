@@ -16,5 +16,7 @@ def render(news):
     news_phase["3단계"] = news_phase["시기"].map(PHASE_MAP)
     counts = news_phase["3단계"].value_counts().reindex(PHASE_ORDER).fillna(0)
     fig_p = go.Figure(go.Bar(x=counts.index, y=counts.values, marker_color=theme.COLOR["brand"]))
-    fig_p.update_layout(**theme.plotly_layout(height=340, showlegend=False))
-    theme.plotly_chart(fig_p)
+    fig_p.update_layout(**theme.plotly_layout(height=340, showlegend=False, bargap=0.55))
+    _, col_mid, _ = st.columns([1, 2, 1])
+    with col_mid:
+        theme.plotly_chart(fig_p)
