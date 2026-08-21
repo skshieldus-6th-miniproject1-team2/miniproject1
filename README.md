@@ -172,20 +172,33 @@ CSV는 모두 `encoding="utf-8-sig"`로 읽습니다(BOM 있음).
 
 ---
 
-## 제안 파일 구조
+## 파일 구조
+
+화면당 1개 파일이던 초안에서, 협업 시 같은 파일을 여러 명이 동시에 건드리지 않도록
+**화면(page) 단위 → 섹션(section) 단위**로 한 번 더 쪼갰다. `app.py`/`pages/*.py`는 데이터를
+준비해서 `sections/`의 렌더 함수에 순서대로 넘겨주는 얇은 진입점만 남는다.
 
 ```
 .
-├─ app.py                      # 1. 메인 대시보드 (엔트리)
+├─ app.py                      # 1. 메인 대시보드 (엔트리 — sections/main/* 호출)
 ├─ pages/
-│  ├─ 1_지역별_변동률.py
-│  ├─ 2_정책_전후_비교.py
-│  └─ 3_뉴스_여론_분석.py
+│  ├─ 1_지역별_변동률.py         # 엔트리 — sections/region/* 호출
+│  ├─ 2_정책_전후_비교.py         # 엔트리 — sections/policy_compare/* 호출
+│  └─ 3_뉴스_여론_분석.py         # 엔트리 — sections/news/* 호출
+├─ sections/                   # 화면별 섹션 렌더 함수 (1 섹션 = 1 파일)
+│  ├─ main/             (sidebar · kpi · monthly_trend · quadrant · region_comparison · public_reaction · news_phase)
+│  ├─ region/            (sidebar · kpi · ranking_chart · tilemap · amount_band · dong_tables)
+│  ├─ policy_compare/    (sidebar · banner · kpi · monthly_chart · summary_table · area_compare · dong_compare)
+│  └─ news/              (constants · sidebar · kpi · collection · phase_table · emotion_bar · gov_polarity · article_explorer)
 ├─ lib/
-│  ├─ load.py                  # CSV 로드 + @st.cache_data
+│  ├─ load.py                  # CSV 로드 + @st.cache_data + guard_or_stop()
 │  ├─ metrics.py               # 평단가·변동률·권역 집계
 │  ├─ sentiment.py             # 7종 → 긍정/중립/부정 3그룹 매핑
-│  └─ theme.py                 # 위 디자인 토큰
+│  └─ theme.py                 # 디자인 토큰, 공통 Plotly 레이아웃, 로고
+├─ assets/
+│  └─ logo.png                 # 사이드바 상단 팀 로고 (st.logo)
+├─ .streamlit/
+│  └─ config.toml              # [theme] — 배경·강조색 (CSS 대신 여기서 고정)
 ├─ data/
 │  ├─ apt_master.csv                 # main · pipeline.py
 │  ├─ gu_dong_month_avg_price.csv    # main · pipeline.py
@@ -201,6 +214,10 @@ CSV는 모두 `encoding="utf-8-sig"`로 읽습니다(BOM 있음).
 
 다른 브랜치 산출물은 **`data/`에 복사해 두고 앱은 그 폴더만 읽습니다.** 브랜치를 넘나들며 상대 경로로
 접근하면 클론 위치에 따라 깨지므로, 갱신할 때 파일을 덮어쓰는 방식으로 씁니다.
+
+**섹션 파일을 추가·수정할 때:** 함수 시그니처는 `render(...)` 하나로 통일하고, 필요한 데이터프레임은
+페이지 엔트리에서 계산해 인자로 넘긴다(섹션 파일 안에서 새로 `load.*` 호출 금지 — 캐시 키가 흩어진다).
+사이드바 입력은 각 화면의 `sections/<page>/sidebar.py`에만 있고, 나머지 섹션은 그 반환값을 받아서만 쓴다.
 
 ## 실행
 

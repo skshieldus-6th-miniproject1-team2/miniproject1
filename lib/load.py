@@ -67,3 +67,15 @@ def data_files_missing() -> list[str]:
         "sentiment_summary.csv",
     ]
     return [name for name in required if not (DATA_DIR / name).exists()]
+
+
+def guard_or_stop():
+    """data/ 파일이 없으면 안내 메시지를 띄우고 스크립트를 멈춘다. 페이지마다 반복되던 체크를 한곳에 모았다."""
+    missing = data_files_missing()
+    if missing:
+        st.error(
+            "data/ 폴더에 다음 파일이 없어 화면을 채울 수 없습니다: "
+            + ", ".join(missing)
+            + "\n\n실제 파이프라인 산출물이 올라오기 전까지는 임시(mock) 데이터로 확인해 주세요."
+        )
+        st.stop()
