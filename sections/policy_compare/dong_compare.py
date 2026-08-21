@@ -16,7 +16,7 @@ def render(apt, base_gu):
         y=dong_table["법정동"], x=dong_table["변동률"], orientation="h",
         marker_color=[theme.COLOR["up"] if v > 0 else theme.COLOR["down"] for v in dong_table["변동률"]],
     ))
-    fig_dong.update_layout(**theme.plotly_layout(height=max(280, 28 * len(dong_table)), showlegend=False, xaxis_title="평단가 변동률"))
+    fig_dong.update_layout(**theme.plotly_layout(height=max(300, 34 * len(dong_table)), showlegend=False, xaxis_title="평단가 변동률"))
     fig_dong.update_xaxes(tickformat=".0%")
     theme.plotly_chart(fig_dong)
     st.dataframe(

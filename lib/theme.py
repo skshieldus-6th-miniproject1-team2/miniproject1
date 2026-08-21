@@ -105,6 +105,13 @@ def inject_css():
             height: auto !important;
             align-items: flex-start !important;
         }}
+        /* 멀티셀렉트 태그(예: 법정동 선택) — 새 Streamlit 기본 스타일 + 한글 폰트가 겹치면서
+           칩이 필요 이상으로 커 보여서, 사이드바 안에서만 살짝 줄인다. */
+        section[data-testid="stSidebar"] div[data-testid="stMultiSelectTagsContainer"] span[data-tag] {{
+            font-size: 0.8rem !important;
+            padding: 2px 7px !important;
+            min-height: 0 !important;
+        }}
         </style>
         """,
         unsafe_allow_html=True,
