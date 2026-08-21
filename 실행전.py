@@ -1,0 +1,13 @@
+import subprocess
+import sys
+
+subprocess.check_call([
+    sys.executable,
+    "-m",
+    "pip",
+    "install",
+    "-r",
+    "requirements.txt"
+])
+
+print("패키지 설치 완료")
