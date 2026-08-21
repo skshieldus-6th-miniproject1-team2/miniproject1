@@ -1,0 +1,11 @@
+# --- Python 캐시 및 컴파일 파일 ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- 가상환경 (Virtual Environments) ---
+.venv/
+venv/
+env/
+ENV/
