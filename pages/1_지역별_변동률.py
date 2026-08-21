@@ -7,7 +7,6 @@ import streamlit as st
 from lib import load, metrics, theme
 from sections.region import amount_band, dong_tables, kpi, ranking_chart, sidebar, tilemap
 
-st.set_page_config(page_title="지역별 변동률 · 맛동산", page_icon="🏠", layout="wide")
 theme.inject_css()
 theme.render_logo()
 load.guard_or_stop()

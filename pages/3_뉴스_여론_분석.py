@@ -7,7 +7,6 @@ import streamlit as st
 from lib import load, theme
 from sections.news import article_explorer, collection, emotion_bar, gov_polarity, kpi, phase_table, sidebar
 
-st.set_page_config(page_title="뉴스·여론 분석 · 맛동산", page_icon="🏠", layout="wide")
 theme.inject_css()
 theme.render_logo()
 load.guard_or_stop()
