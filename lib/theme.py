@@ -87,11 +87,14 @@ def inject_css():
         html, body,
         [class*="css"]:not([data-testid="stIconMaterial"]),
         [class*="st-emotion"]:not([data-testid="stIconMaterial"]) {{ font-family: {FONT_FAMILY} !important; }}
+        /* delta가 있는 카드(k1, k2)는 3줄, 없는 카드(k3, k4)는 2줄이라 높이가 들쭉날쭉했다.
+           min-height로 델타 유무와 상관없이 네 카드 높이를 맞춘다. */
         div[data-testid="stMetric"] {{
             background-color: {COLOR["card"]} !important;
             border: 1px solid {COLOR["border"]};
             border-radius: 10px;
             padding: 14px 16px;
+            min-height: 138px;
         }}
         /* st.logo()는 최대 높이가 32px로 고정돼 있어 그림 로고가 뭉개진다.
            네비게이션 목록 위 자리는 유지하면서 실제 렌더링 크기만 키운다. */

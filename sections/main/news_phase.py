@@ -16,5 +16,8 @@ def render(news):
     st.caption("평시 / 시행 전 / 시행일 / 초기 반응 (3개 정책 통합)")
     counts = news["단계"].value_counts().reindex(PHASE_OPTIONS).fillna(0)
     fig_p = go.Figure(go.Bar(x=counts.index, y=counts.values, marker_color=theme.COLOR["brand"]))
-    fig_p.update_layout(**theme.plotly_layout(height=340, showlegend=False))
-    theme.plotly_chart(fig_p)
+    fig_p.update_layout(**theme.plotly_layout(height=340, showlegend=False, bargap=0.55))
+    # 막대 4개가 전체 폭에 퍼져 헐렁해 보이던 문제: 가운데 컬럼으로 좁혀서 표시한다.
+    _, col_mid, _ = st.columns([1, 2, 1])
+    with col_mid:
+        theme.plotly_chart(fig_p)

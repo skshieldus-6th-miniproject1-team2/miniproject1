@@ -6,18 +6,18 @@ gu_dong_month_avg_price.csv(구·동·월 집계본)는 아직 없지만, 현재
 그래서 `guard_apt_or_stop()`의 필수 파일 목록에는 넣지 않는다 (안 쓰는 파일 때문에 화면을
 막으면 안 된다). 나중에 실제로 그 파일을 쓰는 코드가 생기면 APT_FILES에 다시 추가할 것.
 
-뉴스 데이터는 webscraping 브랜치 산출물로 교체됐다. 실제 파일 5개:
-- News_Scraping.csv          : 기사 단위, 감정 3그룹(긍정/부정/중립) — 참고용, 다른 파일로 대체됨
-- News_Scraping_retouch.csv  : 기사 단위, 감정 7종 + 확률(수치) — 세부 감정·기사 탐색에 사용
+뉴스 데이터는 webscraping 브랜치 산출물로 교체됐다. 실제 파일 4개:
+- News_Scraping.csv          : 기사 단위, 감정 3그룹(긍정/부정/중립) + 확률(수치) — 기사 탐색에 사용
 - News_Scraping_summary.csv  : 정책 구분 없이 전체 전/후 감정 비율 1건
 - j_News_Scraping.csv        : 기사 단위, '시기'가 "정책_단계"(예: "6·27_시행전") 또는 "평시".
                                 기업/소비자/시장 3개 관점별 감정을 따로 담고 있다.
 - j_News_Scraping_summary.csv: 정책 × 관점 × 전/후 감정 비율 집계 (긍정/중립/부정 합 100)
 
-News_Scraping_retouch.csv의 '정책' 컬럼은 전체 행이 "6·27 가계부채 관리 강화방안"으로
-고정돼 있어(파이프라인 미완성 추정) 정책 구분에 못 쓴다. 그래서 기사 단위로 정책·단계가
-필요한 곳은 j_News_Scraping.csv의 '시기'를 파싱해서 쓰고, url 기준으로 두 파일을 합쳐
-(감정 7종 + 확률) + (정책 + 단계)를 한 표로 만든다 (`load_news_articles`).
+News_Scraping.csv에는 정책 구분이 없어서(자체 '시기'는 정책 없이 단계만 담는다), 기사
+단위로 정책·단계가 필요한 곳은 j_News_Scraping.csv의 '시기'를 파싱해서 쓰고, url 기준으로
+두 파일을 합쳐 (감정 3그룹 + 확률) + (정책 + 단계)를 한 표로 만든다 (`load_news_articles`).
+두 파일은 url이 완전히 겹쳐(News_Scraping.csv 13,922건 전부 j_News_Scraping.csv에 존재)
+정책·단계 구간 전체가 빠짐없이 남는다.
 """
 from pathlib import Path
 
@@ -28,7 +28,7 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 APT_FILES = ["apt_master.csv"]
 NEWS_FILES = [
-    "News_Scraping_retouch.csv",
+    "News_Scraping.csv",
     "j_News_Scraping.csv",
     "j_News_Scraping_summary.csv",
     "News_Scraping_summary.csv",
@@ -71,19 +71,15 @@ def load_gu_dong_month_avg_price() -> pd.DataFrame:
 
 # ---------------------------------------------------------------- 뉴스 (실 데이터)
 @st.cache_data(show_spinner=False)
-def load_news_detail() -> pd.DataFrame:
-    """News_Scraping_retouch.csv — 기사 단위 7종 감정 + 확률. '정책'/'대통령' 컬럼은 전체가 같은 값이라 쓰지 않는다."""
-    df = _read_csv("News_Scraping_retouch.csv")
-    df["날짜"] = pd.to_datetime(df["날짜"])
-    return df
-
-
-@st.cache_data(show_spinner=False)
 def load_news_base() -> pd.DataFrame:
-    """News_Scraping.csv — 기사 단위, 감정이 이미 3그룹(긍정/부정/중립)으로 돼 있다.
-    (retouch.csv와 달리 7종이 아니라서 sentiment.add_group_column() 매핑을 거치면 안 된다.)"""
+    """News_Scraping.csv — 기사 단위, 감정 3그룹(긍정/부정/중립) + 확률(수치).
+
+    일부 행(약 2,693건)은 확률 계산이 누락돼 '수치'에 분류근거 문구가 대신 들어있다.
+    숫자로 변환 안 되는 값은 결측으로 처리한다 — 확률 필터·정렬에서 자연히 제외된다.
+    """
     df = _read_csv("News_Scraping.csv")
     df["날짜"] = pd.to_datetime(df["날짜"])
+    df["수치"] = pd.to_numeric(df["수치"], errors="coerce")
     return df
 
 
@@ -101,11 +97,11 @@ def load_news_perspective() -> pd.DataFrame:
 
 @st.cache_data(show_spinner=False)
 def load_news_articles() -> pd.DataFrame:
-    """기사 단위 통합표 — url 기준으로 (감정 7종·확률)과 (정책·단계)를 합친다.
+    """기사 단위 통합표 — url 기준으로 (감정 3그룹·확률)과 (정책·단계)를 합친다.
 
-    감정별 기사 탐색, 시점별 감정 분포처럼 정책 단위 필터링이 필요한 화면은 전부 이 표를 쓴다.
+    감정별 기사 탐색처럼 정책 단위 필터링이 필요한 화면은 전부 이 표를 쓴다.
     """
-    detail = load_news_detail()[["날짜", "기사제목", "url", "감정", "수치"]]
+    detail = load_news_base()[["날짜", "기사제목", "url", "감정", "수치"]]
     perspective = load_news_perspective()[["url", "정책", "단계", "기업_감정", "소비자_감정", "시장_감정"]]
     return detail.merge(perspective, on="url", how="inner")
 

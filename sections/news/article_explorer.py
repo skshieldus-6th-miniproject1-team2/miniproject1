@@ -8,7 +8,7 @@ def render(news):
     st.subheader("감정별 기사 탐색")
     st.caption("막대 클릭 대신 감정 탭 + 표로 확인합니다.")
 
-    emo = st.segmented_control("감정", ["전체"] + sentiment.EMOTIONS_7, default="전체")
+    emo = st.segmented_control("감정", ["전체"] + sentiment.GROUP_ORDER, default="전체")
     order = st.radio("정렬", ["확률 높은 순", "최신순"], horizontal=True, label_visibility="collapsed")
 
     view = news if emo in (None, "전체") else news[news["감정"] == emo]

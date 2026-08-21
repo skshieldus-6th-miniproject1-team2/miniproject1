@@ -55,7 +55,7 @@ def render_main_dashboard():
 
     sentiment_trend.render(news_base, shown_markers)
 
-    st.caption("데이터: apt_master.csv(부동산), News_Scraping_retouch.csv + j_News_Scraping.csv(뉴스), News_Scraping.csv(감정 추이)")
+    st.caption("데이터: apt_master.csv(부동산), News_Scraping.csv + j_News_Scraping.csv(뉴스·감정)")
 
 
 # st.navigation()으로 좌측 네비게이션 라벨을 명시적으로 지정한다.

@@ -1,7 +1,6 @@
 """메인 대시보드 — 부동산 대책 시행 전후 감정 추이 (5일 단위 일평균).
 
-News_Scraping.csv 기준 — 이 파일의 '감정'은 이미 3그룹(긍정/부정/중립)이라
-News_Scraping_retouch.csv(7종)처럼 sentiment.add_group_column() 매핑을 거치지 않는다.
+News_Scraping.csv 기준 — 이 파일의 '감정'은 이미 3그룹(긍정/부정/중립)이다.
 """
 import pandas as pd
 import plotly.graph_objects as go
