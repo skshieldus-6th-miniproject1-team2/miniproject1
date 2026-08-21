@@ -14,6 +14,6 @@ def render(news):
         category_orders={"정부": GOV_OPTIONS, "감정그룹": sentiment.GROUP_ORDER},
         color_discrete_map={"긍정": theme.COLOR["sentiment_pos"], "중립": theme.COLOR["sentiment_neu"], "부정": theme.COLOR["sentiment_neg"]},
     )
-    fig_gov.update_layout(**theme.plotly_layout(height=340))
+    fig_gov.update_layout(**theme.plotly_layout(height=300, bargap=0.3))
     fig_gov.update_yaxes(tickformat=".0%")
     st.plotly_chart(fig_gov, use_container_width=True)

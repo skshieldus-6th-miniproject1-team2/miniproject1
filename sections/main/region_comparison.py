@@ -18,8 +18,10 @@ def render(apt, gu_table, region_mode):
         y=compare_df["구분"], x=compare_df["평단가_변동률"], orientation="h", name="평단가 변동률",
         marker_color=[theme.COLOR["up"] if v and v > 0 else theme.COLOR["down"] for v in compare_df["평단가_변동률"]],
     ))
-    fig_r.update_layout(**theme.plotly_layout(height=230 if region_mode == "4대 권역" else 520, showlegend=False, title="평단가 변동률"))
+    fig_r.update_layout(**theme.plotly_layout(height=230 if region_mode == "4대 권역" else 420, showlegend=False, title="평단가 변동률"))
     fig_r.update_xaxes(tickformat=".0%")
+    if region_mode != "4대 권역":
+        fig_r.update_yaxes(tickfont=dict(size=10))
     st.plotly_chart(fig_r, use_container_width=True)
 
     if region_mode == "4대 권역":

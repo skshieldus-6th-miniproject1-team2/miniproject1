@@ -35,10 +35,15 @@ st.divider()
 monthly_trend.render(apt_view, shown_markers)
 st.divider()
 
-col_a, col_b = st.columns([3, 2])
-with col_a:
+if region_mode == "4대 권역":
+    col_a, col_b = st.columns([3, 2])
+    with col_a:
+        quadrant.render(apt)
+    with col_b:
+        region_comparison.render(apt, gu_table, region_mode)
+else:
+    # 25개 구 비교는 항목이 많아 좁은 컬럼에 넣으면 빽빽해지므로 전체 폭을 쓴다
     quadrant.render(apt)
-with col_b:
     region_comparison.render(apt, gu_table, region_mode)
 st.divider()
 

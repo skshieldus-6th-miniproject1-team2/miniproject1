@@ -33,7 +33,9 @@ with col_right:
     emotion_bar.render(news)
 st.divider()
 
-gov_polarity.render(news)
+col_gov, _ = st.columns([1, 1])
+with col_gov:
+    gov_polarity.render(news)
 st.divider()
 
 article_explorer.render(news)
