@@ -36,13 +36,9 @@ st.caption(
 )
 st.divider()
 
-policy_polarity.render(load.load_news_perspective_summary())
+policy_polarity.render(news_full)
 st.divider()
 
 article_explorer.render(news)
 
-st.divider()
-st.subheader("댓글 감정 분석")
-st.info("예정 — 댓글 수집·분석 파이프라인이 확정되면 이 절에 추가합니다.")
-
-st.caption("데이터: j_News_Scraping.csv, News_Scraping_retouch.csv (url 기준 결합), j_News_Scraping_summary.csv.")
+st.caption("데이터: j_News_Scraping.csv, News_Scraping_retouch.csv (url 기준 결합).")

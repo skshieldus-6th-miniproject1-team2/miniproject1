@@ -1,36 +1,58 @@
-"""뉴스·여론 분석 — 정책별 감정 극성 100% 누적 막대 (구 '정부별 감정 극성').
+"""뉴스·여론 분석 — 관점별 감정 추이 (5일 단위 일평균 선 그래프).
 
-실제 데이터에는 정부 비교 대신 정책(6·27/9·7/10·15) × 관점(기업/소비자/시장) × 전/후 축이 있다.
-차트 형태(100% 누적 막대)는 그대로 두고, 관점·전후는 이 섹션 안에서 로컬로 고른다.
+j_News_Scraping.csv 전체(정책 구분 없이 날짜 전체)를 쓴다. 기업/시장 관점은 라디오로 고른다
+(소비자 관점은 화면에서 뺐다 — j_News_Scraping_summary.csv 참고 시 필요하면 다시 켤 수 있다).
 """
-import plotly.express as px
+import pandas as pd
+import plotly.graph_objects as go
 import streamlit as st
 
-from lib import sentiment, theme
+from lib import theme
 from sections.news.constants import PERSPECTIVE_OPTIONS
 
-POLICY_ORDER = ["6·27", "9·7", "10·15"]
-PERIOD_LABELS = {"before": "정책 시행 전", "after": "정책 시행 후"}
+# j_News_Scraping.csv 기준 실제 시행일 (6·27_시행일 / 9·7_시행일 / 10·15_시행일의 날짜)
+POLICY_DATES = [("6·27", "2025-06-28"), ("9·7", "2025-09-08"), ("10·15", "2025-10-16")]
+GROUP_ORDER = ["부정", "중립", "긍정"]
+COLOR_MAP = {"부정": theme.COLOR["sentiment_neg"], "중립": theme.COLOR["sentiment_neu"], "긍정": theme.COLOR["sentiment_pos"]}
 
 
-def render(perspective_summary):
-    st.subheader("정책별 감정 극성")
+def render(news_full):
+    st.subheader("관점별 감정 추이")
 
-    c1, c2 = st.columns(2)
-    with c1:
-        perspective = st.radio("관점", PERSPECTIVE_OPTIONS, horizontal=True)
-    with c2:
-        period_label = st.radio("시점", list(PERIOD_LABELS.values()), horizontal=True, index=1)
-    period = next(k for k, v in PERIOD_LABELS.items() if v == period_label)
+    perspective = st.radio("관점", PERSPECTIVE_OPTIONS, horizontal=True)
+    st.caption(f"[{perspective} 관점] 5일 단위 일평균 뉴스 기사 수 · 감정 극성별")
 
-    df = perspective_summary[(perspective_summary["관점"] == perspective) & (perspective_summary["period"] == period)]
-    long = df.melt(id_vars=["대책"], value_vars=sentiment.GROUP_ORDER, var_name="감정그룹", value_name="비율")
-
-    fig = px.bar(
-        long, x="대책", y="비율", color="감정그룹", barmode="stack",
-        category_orders={"대책": POLICY_ORDER, "감정그룹": sentiment.GROUP_ORDER},
-        color_discrete_map={"긍정": theme.COLOR["sentiment_pos"], "중립": theme.COLOR["sentiment_neu"], "부정": theme.COLOR["sentiment_neg"]},
+    emo_col = f"{perspective}_감정"
+    df = news_full.dropna(subset=["날짜"])
+    counts = (
+        df.groupby([pd.Grouper(key="날짜", freq="5D"), emo_col])
+        .size()
+        .unstack(fill_value=0)
     )
-    fig.update_layout(**theme.plotly_layout(height=300, bargap=0.3))
-    fig.update_yaxes(tickformat=".0%")
+    for group in GROUP_ORDER:
+        if group not in counts.columns:
+            counts[group] = 0
+    daily_avg = counts[GROUP_ORDER] / 5  # 5일 구간 합계를 일평균으로 환산
+
+    fig = go.Figure()
+    for group in GROUP_ORDER:
+        fig.add_trace(go.Scatter(
+            x=daily_avg.index, y=daily_avg[group], mode="lines+markers", name=group,
+            line=dict(color=COLOR_MAP[group], width=2.5), marker=dict(size=5),
+        ))
+
+    for label, date in POLICY_DATES:
+        ts = pd.Timestamp(date)
+        if daily_avg.index.min() <= ts <= daily_avg.index.max():
+            fig.add_vline(x=ts, line_dash="dash", line_color=theme.COLOR["policy_after"], line_width=2)
+            # add_vline은 범례에 안 잡히므로 범례 전용 더미 트레이스를 하나 더 그린다
+            fig.add_trace(go.Scatter(
+                x=[None], y=[None], mode="lines",
+                line=dict(color=theme.COLOR["policy_after"], dash="dash", width=2),
+                name=f"대책 시행일 ({date})",
+            ))
+
+    fig.update_layout(**theme.plotly_layout(height=420))
+    fig.update_xaxes(title_text="날짜", tickformat="%Y-%m-%d")
+    fig.update_yaxes(title_text="일평균 뉴스 기사 수 (건)")
     theme.plotly_chart(fig)
