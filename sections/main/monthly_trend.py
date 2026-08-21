@@ -26,6 +26,10 @@ def render(apt_view, shown_markers):
         # 인접한 정책 마커끼리 라벨이 겹치지 않도록 위아래로 번갈아 배치한다
         fig.add_annotation(x=date[:7], y=1, yref="paper", text=label, showarrow=False, yshift=10 + (i % 2) * 16, font=dict(size=10, color=theme.COLOR["text_muted"]))
     fig.update_layout(**theme.plotly_layout(height=460, showlegend=False))
-    fig.update_yaxes(title_text="만원/평", row=1, col=1)
+    # 평단가 라인은 Plotly 기본 여백이 넉넉해서 확대/축소 시 실제 데이터보다 위아래 공백이 크게 느껴진다.
+    # 데이터 범위 기준으로 여백을 좁게 고정한다.
+    price_min, price_max = monthly["평단가"].min(), monthly["평단가"].max()
+    price_pad = (price_max - price_min) * 0.08 or price_max * 0.02
+    fig.update_yaxes(title_text="만원/평", range=[price_min - price_pad, price_max + price_pad], row=1, col=1)
     fig.update_yaxes(title_text="거래건수", row=2, col=1)
-    st.plotly_chart(fig, use_container_width=True)
+    theme.plotly_chart(fig)

@@ -17,4 +17,4 @@ def render(news):
         fig_s.add_trace(go.Bar(x=GOV_ORDER, y=sub["비율"], name=grp, marker_color=color))
     fig_s.update_layout(**theme.plotly_layout(height=340, barmode="stack"))
     fig_s.update_yaxes(tickformat=".0%")
-    st.plotly_chart(fig_s, use_container_width=True)
+    theme.plotly_chart(fig_s)

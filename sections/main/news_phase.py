@@ -17,4 +17,4 @@ def render(news):
     counts = news_phase["3단계"].value_counts().reindex(PHASE_ORDER).fillna(0)
     fig_p = go.Figure(go.Bar(x=counts.index, y=counts.values, marker_color=theme.COLOR["brand"]))
     fig_p.update_layout(**theme.plotly_layout(height=340, showlegend=False))
-    st.plotly_chart(fig_p, use_container_width=True)
+    theme.plotly_chart(fig_p)

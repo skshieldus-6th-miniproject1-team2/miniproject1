@@ -16,4 +16,4 @@ def render(news):
     )
     fig_gov.update_layout(**theme.plotly_layout(height=300, bargap=0.3))
     fig_gov.update_yaxes(tickformat=".0%")
-    st.plotly_chart(fig_gov, use_container_width=True)
+    theme.plotly_chart(fig_gov)

@@ -10,4 +10,4 @@ def render(apt):
     band = metrics.amount_band_distribution(apt)
     fig_band = px.pie(band, names="금액대", values="건수", hole=0.5, color_discrete_sequence=theme.SERIES)
     fig_band.update_layout(**theme.plotly_layout(height=420))
-    st.plotly_chart(fig_band, use_container_width=True)
+    theme.plotly_chart(fig_band)

@@ -49,4 +49,4 @@ def render(target, before, after, compare_metric):
         fig_area.add_trace(go.Bar(x=area_counts.index, y=area_counts.get("정책후"), name="정책 후", marker_color=theme.COLOR["policy_after"]))
         fig_area.update_layout(**theme.plotly_layout(height=360, barmode="group"))
 
-    st.plotly_chart(fig_area, use_container_width=True)
+    theme.plotly_chart(fig_area)

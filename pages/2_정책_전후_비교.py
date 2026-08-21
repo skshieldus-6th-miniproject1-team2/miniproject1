@@ -7,7 +7,6 @@ import streamlit as st
 from lib import load, metrics, theme
 from sections.policy_compare import area_compare, banner, dong_compare, kpi, monthly_chart, sidebar, summary_table
 
-st.set_page_config(page_title="정책 전·후 비교 · 맛동산", page_icon="🏠", layout="wide")
 theme.inject_css()
 theme.render_logo()
 load.guard_or_stop()

@@ -18,7 +18,7 @@ def render(apt, base_gu):
     ))
     fig_dong.update_layout(**theme.plotly_layout(height=max(280, 28 * len(dong_table)), showlegend=False, xaxis_title="평단가 변동률"))
     fig_dong.update_xaxes(tickformat=".0%")
-    st.plotly_chart(fig_dong, use_container_width=True)
+    theme.plotly_chart(fig_dong)
     st.dataframe(
         dong_table.assign(변동률=lambda d: d["변동률"].map(lambda v: f"{v:+.1%}"), 거래량_변동률=lambda d: d["거래량_변동률"].map(lambda v: f"{v:+.1%}" if v is not None else "N/A")),
         hide_index=True, use_container_width=True,

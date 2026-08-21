@@ -20,9 +20,7 @@ def render(apt, gu_table, region_mode):
     ))
     fig_r.update_layout(**theme.plotly_layout(height=230 if region_mode == "4대 권역" else 420, showlegend=False, title="평단가 변동률"))
     fig_r.update_xaxes(tickformat=".0%")
-    if region_mode != "4대 권역":
-        fig_r.update_yaxes(tickfont=dict(size=10))
-    st.plotly_chart(fig_r, use_container_width=True)
+    theme.plotly_chart(fig_r)
 
     if region_mode == "4대 권역":
         fig_v = go.Figure()
@@ -32,4 +30,4 @@ def render(apt, gu_table, region_mode):
         ))
         fig_v.update_layout(**theme.plotly_layout(height=230, showlegend=False, title="거래량 변동률"))
         fig_v.update_xaxes(tickformat=".0%")
-        st.plotly_chart(fig_v, use_container_width=True)
+        theme.plotly_chart(fig_v)

@@ -1,7 +1,7 @@
 """디자인 토큰. README.md의 '디자인 토큰' 절과 1:1로 대응한다."""
 from pathlib import Path
 
-LOGO_PATH = Path(__file__).resolve().parent.parent / "assets" / "logo.png"
+LOGO_PATH = Path(__file__).resolve().parent.parent / "assets" / "logo1.png"
 
 COLOR = {
     "bg": "#F9F9F7",
@@ -94,6 +94,17 @@ def inject_css():
             border-radius: 10px;
             padding: 14px 16px;
         }}
+        /* st.logo()는 최대 높이가 32px로 고정돼 있어 그림 로고가 뭉개진다.
+           네비게이션 목록 위 자리는 유지하면서 실제 렌더링 크기만 키운다. */
+        img[data-testid="stSidebarLogo"] {{
+            max-height: none !important;
+            height: 140px !important;
+            width: auto !important;
+        }}
+        div[data-testid="stSidebarHeader"] {{
+            height: auto !important;
+            align-items: flex-start !important;
+        }}
         </style>
         """,
         unsafe_allow_html=True,
@@ -101,8 +112,26 @@ def inject_css():
 
 
 def render_logo():
-    """사이드바·앱 좌측 상단에 팀 로고를 띱운다. 각 페이지 스크립트 최상단에서 호출한다."""
+    """사이드바 네비게이션 목록 '위' 자리에 팀 로고를 띱운다. 각 페이지 스크립트 최상단에서 호출한다.
+
+    st.logo()만 그 위쪽 자리를 쓸 수 있는데 기본 최대 높이가 32px라 작게 나온다.
+    inject_css()의 [data-testid="stLogo"] 규칙으로 높이 제한을 풀어서 크게 보이게 한다.
+    """
     import streamlit as st
 
     if LOGO_PATH.exists():
         st.logo(str(LOGO_PATH), size="large")
+
+
+# 모드바의 확대(+)/축소(-) 버튼은 클릭 한 번에 절반씩 뛰어서 원하는 지점을 못 맞춘다.
+# 버튼만 없애고, 드래그로 원하는 구간을 정확히 확대하는 방식(박스 줌)은 그대로 둔다.
+PLOTLY_CONFIG = {"displaylogo": False, "modeBarButtonsToRemove": ["zoomIn2d", "zoomOut2d"]}
+
+
+def plotly_chart(fig, **kwargs):
+    """st.plotly_chart 공통 래퍼 — PLOTLY_CONFIG와 use_container_width 기본값을 매번 안 적어도 되게 한다."""
+    import streamlit as st
+
+    kwargs.setdefault("use_container_width", True)
+    config = {**PLOTLY_CONFIG, **kwargs.pop("config", {})}
+    st.plotly_chart(fig, config=config, **kwargs)

@@ -42,7 +42,7 @@ def render(apt, gu_table, valid, unit, sort_key, min_sample):
     axis_lo = min(0, plot_df[rate_col].min())
     axis_hi = max(0, plot_df[rate_col].max())
     fig.update_xaxes(tickformat=".0%", range=[axis_lo * 1.6 if axis_lo < 0 else -0.01, axis_hi * 1.6 if axis_hi > 0 else 0.01])
-    st.plotly_chart(fig, use_container_width=True)
+    theme.plotly_chart(fig)
 
     if unit == "자치구":
         low_sample_gu = gu_table[gu_table["표본부족"]]["구"].tolist()
