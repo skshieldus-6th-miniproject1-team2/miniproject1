@@ -315,9 +315,9 @@ def generate_3view_summary_csv(df, summary_output_path):
         
     return summary_df
 
-def run_qwen_analysis_pipeline_3view(input_path="data/News_Scraping_retouch.csv",
-                                     output_path="data/News_Scraping_retouch_qwen.csv",
-                                     summary_path="data/News_Scraping_retouch_qwen_summary.csv",
+def run_qwen_analysis_pipeline_3view(input_path="data/j_News_Scraping_retouch.csv",
+                                     output_path="data/j_News_Scraping.csv",
+                                     summary_path="data/j_News_Scraping_summary.csv",
                                      sample_mode=False):
     """
     뉴스 CSV를 읽어와 3관점 감성 분석 파이프라인을 가동합니다.

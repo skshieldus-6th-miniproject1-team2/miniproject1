@@ -192,7 +192,7 @@ def scrape_naver_land_news(date_str, max_articles=100):
         
     return articles
 
-def save_to_csv(rows, filename="data/News_Scraping_retouch.csv"):
+def save_to_csv(rows, filename="data/j_News_Scraping_retouch.csv"):
     """
     가공된 뉴스 데이터를 CSV 파일에 누적 저장하며, 중복된 데이터는 저장하지 않습니다.
     """
@@ -239,7 +239,7 @@ def save_to_csv(rows, filename="data/News_Scraping_retouch.csv"):
     except Exception:
         pass
 
-def sort_csv_by_date(filename="data/News_Scraping_retouch.csv"):
+def sort_csv_by_date(filename="data/j_News_Scraping_retouch.csv"):
     """
     저장된 CSV 파일을 날짜 순으로 정렬하여 덮어씁니다.
     """
@@ -271,7 +271,7 @@ def sort_csv_by_date(filename="data/News_Scraping_retouch.csv"):
     except Exception:
         pass
 
-def scrape_full_period(filename="data/News_Scraping_retouch.csv", max_articles_per_day=100):
+def scrape_full_period(filename="data/j_News_Scraping_retouch.csv", max_articles_per_day=100):
     """
     2025-05-23 ~ 2025-10-26 전체 기간(약 157일)의 모든 날짜에 대해
     하루 최대 100건씩 네이버 부동산 뉴스를 수집합니다.

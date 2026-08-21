@@ -14,6 +14,7 @@ import pandas as pd
 from lib.load import load_emotion_data
 from lib.sentiment import calculate_metrics, get_top_news_by_date
 from lib.visualization import generate_trend_chart, generate_comparison_bar_chart
+from lib.j_visualization import generate_3view_trend_chart
 
 def main():
     parser = argparse.ArgumentParser(description="부동산 뉴스 감성 통계 분석 및 시각화 생성기")
@@ -26,14 +27,26 @@ def main():
     parser.add_argument(
         "--trend-output", 
         type=str, 
-        default="images/emotion_trend_qwen.png", 
+        default="images/emotion_trend.png", 
         help="생성할 감정 추이 선 그래프 이미지 경로"
     )
     parser.add_argument(
         "--comparison-output", 
         type=str, 
-        default="images/emotion_comparison_qwen.png", 
+        default="images/emotion_comparison.png", 
         help="생성할 감정 비율 비교 막대 그래프 이미지 경로"
+    )
+    parser.add_argument(
+        "--trend3-output", 
+        type=str, 
+        default="images/emotion_trend_3.png", 
+        help="생성할 3관점 감정 추이 선 그래프 이미지 경로"
+    )
+    parser.add_argument(
+        "--trend3-input", 
+        type=str, 
+        default="data/j_News_Scraping.csv", 
+        help="3관점 감성 분석 완료 결과를 담은 CSV 파일 경로 (J 접두어 파일)"
     )
     parser.add_argument(
         "--effective-date1", 
@@ -100,7 +113,7 @@ def main():
             print("-" * 50)
             
     # 4. 이미지 저장 디렉토리 생성
-    for path in [args.trend_output, args.comparison_output]:
+    for path in [args.trend_output, args.comparison_output, args.trend3_output]:
         dir_name = os.path.dirname(path)
         if dir_name and not os.path.exists(dir_name):
             os.makedirs(dir_name, exist_ok=True)
@@ -139,6 +152,16 @@ def main():
         print(f"[Success] 감정 비율 비교 막대 그래프 저장 완료 -> {args.comparison_output}")
     except Exception as e:
         print(f"[Warning] 감정 비율 비교 막대 그래프 생성 중 에러 발생: {e}")
+        
+    # 7. 3관점 감정 추이 선 그래프 생성 및 저장
+    try:
+        generate_3view_trend_chart(
+            input_csv_path=args.trend3_input,
+            output_image_path=args.trend3_output
+        )
+        print(f"[Success] 3관점 감정 추이 선 그래프 저장 완료 -> {args.trend3_output}")
+    except Exception as e:
+        print(f"[Warning] 3관점 감정 추이 선 그래프 생성 중 에러 발생: {e}")
         
     print("\n[Complete] 뉴스 감성 분석 시각화 및 지표 연산업이 모두 완료되었습니다.")
 

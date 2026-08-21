@@ -1,7 +1,7 @@
 """
 이 파일은 수집된 뉴스 기사에 대해 3가지 관점(기업, 소비자, 시장)의 감정 분석 및 트렌드 시각화를 일괄 실행하는 메인 제어 스크립트입니다.
 pandas 벡터화 기법을 사용하여 감정을 일괄 분류하고, 요약 CSV 통계와 시각화 이미지(png)를 차례로 도출합니다.
-실행 방법: python run/j_emotion_analysis_main.py --input data/News_Scraping_retouch.csv --output data/News_Scraping_retouch_qwen.csv --summary data/News_Scraping_retouch_qwen_summary.csv --trend-output images/emotion_trend_qwen.png
+실행 방법: python run/j_emotion_analysis_main.py --input data/j_News_Scraping_retouch.csv --output data/j_News_Scraping.csv --summary data/j_News_Scraping_summary.csv --trend-output images/emotion_trend_3.png
 """
 
 import sys
@@ -19,25 +19,25 @@ def main():
     parser.add_argument(
         "--input", 
         type=str, 
-        default="data/News_Scraping_retouch.csv", 
+        default="data/j_News_Scraping_retouch.csv", 
         help="크롤링 수집된 뉴스 원본 CSV 파일 경로"
     )
     parser.add_argument(
         "--output", 
         type=str, 
-        default="data/News_Scraping_retouch_qwen.csv", 
+        default="data/j_News_Scraping.csv", 
         help="3관점 감성 분석 완료 결과를 저장할 CSV 파일 경로"
     )
     parser.add_argument(
         "--summary", 
         type=str, 
-        default="data/News_Scraping_retouch_qwen_summary.csv", 
+        default="data/j_News_Scraping_summary.csv", 
         help="대책별 3관점 분석 통계 요약을 저장할 CSV 파일 경로"
     )
     parser.add_argument(
         "--trend-output", 
         type=str, 
-        default="images/J_emotion_trend_qwen.png", 
+        default="images/emotion_trend_3.png", 
         help="생성할 3관점 감정 추이 선 그래프 이미지 경로"
     )
     parser.add_argument(

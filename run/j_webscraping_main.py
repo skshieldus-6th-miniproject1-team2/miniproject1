@@ -1,7 +1,7 @@
 """
 이 파일은 지정된 특정 기간(2025-05-23 ~ 2025-10-26)의 부동산 뉴스를 스크랩핑하는 크롤링 작업을 단독 실행하는 메인 제어 스크립트입니다.
 수집된 뉴스는 지정한 CSV 파일에 중복을 제거하여 날짜별로 정렬되어 저장됩니다.
-실행 방법: python run/j_webscraping_main.py --output data/News_Scraping_retouch.csv --max-articles 100
+실행 방법: python run/j_webscraping_main.py --output data/j_News_Scraping_retouch.csv --max-articles 100
 """
 
 import sys
@@ -18,7 +18,7 @@ def main():
     parser.add_argument(
         "--output", 
         type=str, 
-        default="data/News_Scraping_retouch.csv", 
+        default="data/j_News_Scraping_retouch.csv", 
         help="크롤링 수집 데이터를 저장할 CSV 파일 경로"
     )
     parser.add_argument(
