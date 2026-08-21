@@ -79,6 +79,15 @@ def load_news_detail() -> pd.DataFrame:
 
 
 @st.cache_data(show_spinner=False)
+def load_news_base() -> pd.DataFrame:
+    """News_Scraping.csv — 기사 단위, 감정이 이미 3그룹(긍정/부정/중립)으로 돼 있다.
+    (retouch.csv와 달리 7종이 아니라서 sentiment.add_group_column() 매핑을 거치면 안 된다.)"""
+    df = _read_csv("News_Scraping.csv")
+    df["날짜"] = pd.to_datetime(df["날짜"])
+    return df
+
+
+@st.cache_data(show_spinner=False)
 def load_news_perspective() -> pd.DataFrame:
     """j_News_Scraping.csv — '시기'를 정책/단계로 분리해서 반환한다 ("6·27_시행전" → 정책 6·27, 단계 시행전)."""
     df = _read_csv("j_News_Scraping.csv")

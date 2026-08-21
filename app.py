@@ -30,6 +30,7 @@ def render_main_dashboard():
         apt_view = apt
 
     news = load.load_news_articles()
+    news_base = load.load_news_base()  # 감정 추이 차트 전용 — 이미 3그룹(긍정/부정/중립)인 원본
     gu_table = metrics.gu_change_table(apt)
 
     kpi.render(apt, gu_table, news)
@@ -52,9 +53,9 @@ def render_main_dashboard():
         news_phase.render(news)
     st.divider()
 
-    sentiment_trend.render(news, shown_markers)
+    sentiment_trend.render(news_base, shown_markers)
 
-    st.caption("데이터: apt_master.csv(부동산, 아직 미도착), News_Scraping_retouch.csv + j_News_Scraping.csv(뉴스)")
+    st.caption("데이터: apt_master.csv(부동산), News_Scraping_retouch.csv + j_News_Scraping.csv(뉴스), News_Scraping.csv(감정 추이)")
 
 
 # st.navigation()으로 좌측 네비게이션 라벨을 명시적으로 지정한다.
