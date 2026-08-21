@@ -23,4 +23,4 @@ def render(apt, valid, unit, min_sample):
         textinfo="text",
     ))
     tile.update_layout(**theme.plotly_layout(height=420, margin=dict(l=0, r=0, t=10, b=0)))
-    st.plotly_chart(tile, use_container_width=True)
+    theme.plotly_chart(tile)

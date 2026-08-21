@@ -30,4 +30,4 @@ def render(apt):
     fig_q.update_layout(**theme.plotly_layout(height=480, xaxis_title="거래량 증감률", yaxis_title="평단가 변동률"))
     fig_q.update_xaxes(tickformat=".0%")
     fig_q.update_yaxes(tickformat=".0%")
-    st.plotly_chart(fig_q, use_container_width=True)
+    theme.plotly_chart(fig_q)

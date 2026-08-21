@@ -121,3 +121,17 @@ def render_logo():
 
     if LOGO_PATH.exists():
         st.logo(str(LOGO_PATH), size="large")
+
+
+# 모드바의 확대(+)/축소(-) 버튼은 클릭 한 번에 절반씩 뛰어서 원하는 지점을 못 맞춘다.
+# 버튼만 없애고, 드래그로 원하는 구간을 정확히 확대하는 방식(박스 줌)은 그대로 둔다.
+PLOTLY_CONFIG = {"displaylogo": False, "modeBarButtonsToRemove": ["zoomIn2d", "zoomOut2d"]}
+
+
+def plotly_chart(fig, **kwargs):
+    """st.plotly_chart 공통 래퍼 — PLOTLY_CONFIG와 use_container_width 기본값을 매번 안 적어도 되게 한다."""
+    import streamlit as st
+
+    kwargs.setdefault("use_container_width", True)
+    config = {**PLOTLY_CONFIG, **kwargs.pop("config", {})}
+    st.plotly_chart(fig, config=config, **kwargs)

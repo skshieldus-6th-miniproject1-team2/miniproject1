@@ -16,7 +16,7 @@ def render(base_gu, target, apt, before, after):
     fig.add_vline(x="2025-06", line_dash="dash", line_color=theme.COLOR["brand"], row=1, col=1)
     fig.add_annotation(x="2025-06", y=1, yref="paper", text="2025-06-28 정책 시행", showarrow=False, yshift=10, font=dict(size=11, color=theme.COLOR["brand"]))
     fig.update_layout(**theme.plotly_layout(height=440, showlegend=False))
-    st.plotly_chart(fig, use_container_width=True)
+    theme.plotly_chart(fig)
 
     if len(before) and len(after):
         st.caption(

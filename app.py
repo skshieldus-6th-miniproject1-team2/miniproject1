@@ -6,7 +6,7 @@
 import streamlit as st
 
 from lib import load, metrics, theme
-from sections.main import kpi, monthly_trend, news_phase, public_reaction, quadrant, region_comparison, sidebar
+from sections.main import kpi, monthly_trend, news_phase, public_reaction, quadrant, region_comparison, sentiment_trend, sidebar
 
 st.set_page_config(page_title="맛동산", page_icon="🏠", layout="wide")
 
@@ -50,6 +50,9 @@ def render_main_dashboard():
         public_reaction.render(news)
     with col_d:
         news_phase.render(news)
+    st.divider()
+
+    sentiment_trend.render(news, shown_markers)
 
     st.caption("데이터: apt_master.csv, news_titles_category.csv — 현재는 화면 검증용 임시(mock) 데이터입니다.")
 
