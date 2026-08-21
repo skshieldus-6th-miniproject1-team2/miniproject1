@@ -15,7 +15,7 @@ except ImportError:
         return func
 
 @cache_decorator
-def load_emotion_data(csv_path="data/News_Scraping_retouch_qwen.csv"):
+def load_emotion_data(csv_path="data/News_Scraping.csv"):
     """
     Qwen 감성 분석 완료 CSV 파일을 불러와 '날짜' 컬럼을 datetime으로 변환하고,
     '수치' 컬럼을 실수형(Float)으로 안전하게 변환하여 결측치를 보정해 반환합니다.

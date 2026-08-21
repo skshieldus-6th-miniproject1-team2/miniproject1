@@ -190,8 +190,8 @@ def predict_sentiment_qwen(title):
         return f"에러 발생: {e}", "중립"
 
 def run_qwen_analysis_pipeline(input_path="data/News_Scraping_retouch.csv", 
-                               output_path="data/News_Scraping_retouch_qwen.csv", 
-                               summary_path="data/News_Scraping_retouch_qwen_summary.csv", 
+                               output_path="data/News_Scraping.csv", 
+                               summary_path="data/News_Scraping_summary.csv", 
                                sample_mode=False):
     """
     수집된 뉴스 CSV를 읽어 Qwen 감성 분석을 일괄 수행하고 결과를 CSV 파일로 저장합니다.

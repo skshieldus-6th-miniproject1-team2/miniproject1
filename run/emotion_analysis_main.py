@@ -1,7 +1,7 @@
 """
 이 파일은 수집된 뉴스 기사에 대한 Qwen 감성 분석 및 라벨링을 단독 실행하는 메인 제어 스크립트입니다.
 Qwen 8B LLM 모델을 로드하여 각 뉴스 제목의 감정을 분석하고, 요약 통계 결과(summary)까지 함께 도출합니다.
-실행 방법: python run/emotion_analysis_main.py --input data/News_Scraping_retouch.csv --output data/News_Scraping_retouch_qwen.csv --sample
+실행 방법: python run/emotion_analysis_main.py --input data/News_Scraping_retouch.csv --output data/News_Scraping.csv --sample
 """
 
 import sys
@@ -24,13 +24,13 @@ def main():
     parser.add_argument(
         "--output", 
         type=str, 
-        default="data/News_Scraping_retouch_qwen.csv", 
+        default="data/News_Scraping.csv", 
         help="감성 분석 완료 결과를 저장할 CSV 파일 경로"
     )
     parser.add_argument(
         "--summary", 
         type=str, 
-        default="data/News_Scraping_retouch_qwen_summary.csv", 
+        default="data/News_Scraping_summary.csv", 
         help="감성 분석 전/후 통계 요약을 저장할 CSV 파일 경로"
     )
     parser.add_argument(
