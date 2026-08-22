@@ -12,14 +12,11 @@ def render_sidebar(news_all):
     with st.sidebar:
         target_policy = st.radio("대상 정책", ["전체"] + POLICY_OPTIONS, horizontal=False)
         phase_filter = st.selectbox("정책 시점", ["전체 시점"] + PHASE_OPTIONS)
-        min_prob = st.slider("확률 필터", 0.5, 0.99, 0.9, step=0.01)
-        st.caption(f"확률 {min_prob:.2f} 이상만 표시")
 
     news = news_all.copy()
     if target_policy != "전체":
         news = news[news["정책"] == target_policy]
     if phase_filter != "전체 시점":
         news = news[news["단계"] == phase_filter]
-    news = news[news["수치"] >= min_prob]
 
     return news
