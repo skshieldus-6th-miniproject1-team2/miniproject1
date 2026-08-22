@@ -7,14 +7,13 @@ from lib import metrics, theme
 
 def render(apt, gu_table, valid, unit, sort_key, min_sample):
     if unit == "자치구":
-        st.subheader("25개 자치구 평단가 변동률")
+        st.subheader("25개 자치구별 산술평균 평당가 변동률(%) 랭킹")
         level_df = valid.rename(columns={"구": "지역"})
     else:
-        st.subheader("법정동 평단가 변동률")
+        st.subheader("법정동별 산술평균 평당가 변동률(%) 랭킹")
         level_df = metrics.dong_change_table(apt, min_sample=min_sample)
         level_df["지역"] = level_df["구"] + " " + level_df["법정동"]
-    label_col = "거래량_변동률"
-    st.caption(f"막대 = 평단가 변동률(%) · 라벨 = 같은 기간 거래량 변동률(%) · {min_sample}건 미만 지역은 제외")
+    st.caption(f"막대 = 산술평균 평단가 변동률(%) · {min_sample}건 미만 지역은 제외")
 
     sort_map = {
         "변동률 높은 순": ("평단가_변동률" if unit == "자치구" else "변동률", False),
@@ -29,20 +28,17 @@ def render(apt, gu_table, valid, unit, sort_key, min_sample):
         plot_df = plot_df.head(40)
     # 다이버징 바는 항상 값 오름차순으로 그려야 위에서 아래로 큰 값 -> 작은 값 순서로 보인다
     plot_df = plot_df.sort_values(rate_col, ascending=True)
+    plot_df["_pct"] = plot_df[rate_col] * 100  # % 단위 숫자 그대로 표시 (틱에 % 기호 없이)
 
     fig = go.Figure()
     fig.add_trace(go.Bar(
-        y=plot_df["지역"], x=plot_df[rate_col], orientation="h",
+        y=plot_df["지역"], x=plot_df["_pct"], orientation="h",
         marker_color=[theme.COLOR["up"] if v > 0 else theme.COLOR["down"] for v in plot_df[rate_col]],
-        text=[f"{v:+.1%} (거래량 {r:+.1%})" for v, r in zip(plot_df[rate_col], plot_df[label_col])],
-        textposition="outside",
-        cliponaxis=False,  # 짧은 막대의 바깥 라벨이 플롯 경계에서 잘리지 않도록
     ))
     # 25개 자치구 막대가 세로로 빽빽했던 문제: 막대당 높이를 22px→34px로 늘려 전체 차트 높이를 키움
-    fig.update_layout(**theme.plotly_layout(height=max(420, 34 * len(plot_df)), showlegend=False, xaxis_title="평단가 변동률"))
-    axis_lo = min(0, plot_df[rate_col].min())
-    axis_hi = max(0, plot_df[rate_col].max())
-    fig.update_xaxes(tickformat=".0%", range=[axis_lo * 1.6 if axis_lo < 0 else -0.01, axis_hi * 1.6 if axis_hi > 0 else 0.01])
+    fig.update_layout(**theme.plotly_layout(height=max(420, 34 * len(plot_df)), showlegend=False, xaxis_title="산술평균 평당가 변동률(%)"))
+    fig.update_xaxes(zeroline=True, zerolinecolor=theme.COLOR["text_faint"], zerolinewidth=1)
+    fig.update_yaxes(autorange="reversed")  # 위에서 아래로 변동률 오름차순(가장 낮은 값이 맨 위)이 되도록
     theme.plotly_chart(fig)
 
     if unit == "자치구":
